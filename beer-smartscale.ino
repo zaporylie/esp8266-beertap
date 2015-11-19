@@ -50,6 +50,7 @@ void setup() {
   server.on ( "/switchMode", handleAutoMode );
   server.on ( "/status", handleStatus );
   server.on ( "/weight", handleWeight );
+  server.on ( "/tare", handleTare );
   server.on ( "/settings", handleSettings );
   server.onNotFound ( handleNotFound );
   

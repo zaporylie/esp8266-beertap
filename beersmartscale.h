@@ -3,7 +3,8 @@
 HX711 scale = HX711(14, 12);
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(24, 13, NEO_GRB + NEO_KHZ800);
 const int buttonPin = 0;
-const int valvePin = 13;
+const int valvePin = 2;
+
 
 bool autoMode = false;
 int currentStep = 0;
@@ -73,43 +74,6 @@ float getWeight(float offset = 0) {
   return weight - offset;
 }
 
-void showWeight(float weight, float maximum = 1000) {
-  // @todo add colors!
-  Serial.println("Show weight");
-  uint32_t color;
-  if (autoMode && currentStep == 0) {
-    color = strip.Color(0, 0, 150);  
-  }
-  else if (autoMode && currentStep == 1) {
-    color = strip.Color(0, 150, 0);
-  }
-  else if (autoMode && currentStep == 2) {
-    color = strip.Color(150, 0, 0);
-  }
-  else {
-    color = strip.Color(150, 150, 0);
-  }
-  
-  for (uint8_t i = 0; i < strip.numPixels(); i++) {
-    if (i == 0 && weight < 5) {
-      int sec = millis() / 1000;
-      if (sec % 2) {
-        strip.setPixelColor(i, color);
-      }
-      else {
-        strip.setPixelColor(i, strip.Color(0, 0, 0));
-      }
-    }
-    else if (i <= (weight * strip.numPixels() / maximum)) {
-      strip.setPixelColor(i, color);
-    }
-    else {
-      strip.setPixelColor(i, strip.Color(0, 0, 0));
-    }
-    strip.show();
-  }
-}
-
 void openValve() {
   bool valve = digitalRead(valvePin);
   Serial.print("Open valve: ");
@@ -136,4 +100,41 @@ bool getButton() {
   Serial.print("Get button: ");
   Serial.println(button);
   return !button;
+}
+
+void showWeight(float weight, float maximum = 1000) {
+  // @todo add colors!
+  Serial.println("Show weight");
+  uint32_t color;
+  if (getValve()) {
+    color = strip.Color(0, 150, 0);
+  }
+  else if (autoMode && currentStep == 0) {
+    color = strip.Color(0, 0, 150);  
+  }
+  else if (autoMode && currentStep == 2) {
+    color = strip.Color(150, 0, 0);
+  }
+  else {
+    color = strip.Color(150, 150, 0);
+  }
+  
+  for (uint8_t i = 0; i < strip.numPixels(); i++) {
+    if (i == 0 && weight < 5) {
+      int sec = millis() / 1000;
+      if (sec % 2) {
+        strip.setPixelColor(i, color);
+      }
+      else {
+        strip.setPixelColor(i, strip.Color(0, 0, 0));
+      }
+    }
+    else if (i <= (weight * strip.numPixels() / maximum)) {
+      strip.setPixelColor(i, color);
+    }
+    else {
+      strip.setPixelColor(i, strip.Color(0, 0, 0));
+    }
+    strip.show();
+  }
 }

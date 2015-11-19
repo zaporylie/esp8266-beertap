@@ -19,6 +19,11 @@ void handleStatus() {
   server.send(200, "application/javascript", temp);
 }
 
+void handleTare() {
+  tare();
+  server.send(200, "application/javascript", "OK");
+}
+
 void handleSettings() {
   for ( uint8_t i = 0; i < server.args(); i++ ) {
     
